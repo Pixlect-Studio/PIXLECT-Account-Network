@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PIXLECT Account Network</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🟣</text></svg>" />
+<style>
+  :root{
+    --bg:#070a12;
+    --panel:#0f1626;
+    --panel-2:#141d33;
+    --line:#22304f;
+    --text:#e8eefc;
+    --muted:#8fa0c4;
+    --accent:#7c5cff;
+    --accent-2:#22d3ee;
+    --danger:#ff5c7a;
+    --ok:#3ddc97;
+    --radius:16px;
+  }
+
+  *{box-sizing:border-box}
+  [hidden]{display:none !important}
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1000px 600px at 15% -10%, rgba(124,92,255,.22), transparent 60%),
+      radial-gradient(900px 500px at 100% 0%, rgba(34,211,238,.16), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI', system-ui, -apple-system, Roboto, Inter, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100%;
+  }
+
+  .wrap{
+    width:100%;
+    max-width:1080px;
+    margin:0 auto;
+    padding:36px 20px 60px;
+  }
+  body.popup .wrap{ max-width:520px; padding:14px 14px 24px; }
+
+  /* ---------- Brand ---------- */
+  .brand{ display:flex; align-items:center; gap:14px; margin-bottom:24px; }
+  .brand .logo{
+    width:48px;height:48px;border-radius:14px;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:grid;place-items:center;
+    font-weight:900;font-size:22px;color:#fff;
+    box-shadow:0 10px 30px rgba(124,92,255,.35);
+    flex:none;
+  }
+  .brand h1{ font-size:19px; margin:0; letter-spacing:.2px; }
+  .brand .sub{ margin:2px 0 0; color:var(--muted); font-size:12.5px; }
+  body.popup .brand{ margin-bottom:14px; }
+  body.popup .brand h1{ font-size:16px; }
+  body.popup .brand .logo{ width:38px;height:38px;font-size:18px;border-radius:11px; }
+
+  /* ---------- Generic card ---------- */
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)) , var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:0 20px 50px rgba(0,0,0,.35);
+  }
+  .card h2{ margin:0 0 16px; font-size:17px; letter-spacing:.2px; }
+  .card h3{ margin:20px 0 10px; font-size:13px; text-transform:uppercase; letter-spacing:1.2px; color:var(--muted); }
+
+  /* =========================================================
+     AUTH SHELL — tips side + single form panel
+     ========================================================= */
+  .auth-shell{
+    display:grid;
+    grid-template-columns:1fr 440px;
+    border:1px solid var(--line);
+    border-radius:22px;
+    overflow:hidden;
+    background:var(--panel);
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+    min-height:620px;
+  }
+
+  /* -------- tips / decorative side -------- */
+  .auth-side{
+    position:relative;
+    padding:44px 44px 34px;
+    overflow:hidden;
+    background:
+      radial-gradient(600px 400px at 15% 10%, rgba(124,92,255,.30), transparent 60%),
+      radial-gradient(500px 380px at 90% 90%, rgba(34,211,238,.22), transparent 60%),
+      linear-gradient(160deg, #0b1224 0%, #0a0f1c 100%);
+    display:flex;
+    flex-direction:column;
+  }
+  .auth-side::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(70% 70% at 40% 35%, #000 30%, transparent 100%);
+    mask-image:radial-gradient(70% 70% at 40% 35%, #000 30%, transparent 100%);
+    pointer-events:none;
+  }
+  .auth-side-inner{ position:relative; z-index:1; display:flex; flex-direction:column; height:100%; }
+
+  .pill{
+    display:inline-block;
+    font-size:10.5px; letter-spacing:2.2px; font-weight:700;
+    color:#a78bfa;
+    background:rgba(124,92,255,.12);
+    border:1px solid rgba(124,92,255,.35);
+    padding:6px 12px; border-radius:999px;
+    align-self:flex-start;
+    margin-bottom:22px;
+  }
+
+  .auth-side h2{
+    font-size:32px; line-height:1.15; margin:0 0 14px;
+    letter-spacing:-.5px; font-weight:800;
+    background:linear-gradient(120deg,#fff 20%, #c7b8ff 60%, #7ee8ff 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .auth-side .lead{
+    color:#9aabce; font-size:14.5px; line-height:1.6;
+    margin:0 0 30px; max-width:430px;
+  }
+
+  .tips{ list-style:none; padding:0; margin:0 0 auto; display:flex; flex-direction:column; gap:16px; }
+  .tips li{ display:flex; gap:14px; align-items:flex-start; }
+  .tip-ico{
+    width:40px;height:40px;flex:none;border-radius:12px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.09);
+    display:grid;place-items:center;font-size:18px;
+  }
+  .tips b{ display:block; font-size:13.5px; color:#e8eefc; margin-bottom:2px; }
+  .tips small{ color:#7e8fb3; font-size:12.5px; line-height:1.45; }
+
+  .auth-side-foot{
+    margin-top:36px; display:flex; align-items:center; gap:10px;
+    font-size:11.5px; color:#5c6b8c; letter-spacing:.4px;
+  }
+  .dots{ display:flex; gap:5px; }
+  .dots i{ width:6px;height:6px;border-radius:50%; background:#2a3a5c; }
+  .dots i:first-child{ background:var(--accent); }
+  .dots i:nth-child(2){ background:#5b8cff; }
+  .dots i:last-child{ background:var(--accent-2); }
+
+  /* -------- form panel -------- */
+  .auth-panel{
+    background:var(--panel);
+    border-left:1px solid var(--line);
+    padding:36px 34px;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+  }
+
+  .seg{
+    display:grid; grid-template-columns:1fr 1fr;
+    gap:4px; padding:4px;
+    background:#0a1120;
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:26px;
+  }
+  .seg button{
+    padding:9px 10px; border-radius:9px;
+    background:transparent; color:var(--muted);
+    font-weight:600; font-size:13px;
+    transition:.15s;
+  }
+  .seg button.active{
+    background:linear-gradient(135deg, #7c5cff, #5b8cff);
+    color:#fff;
+    box-shadow:0 6px 18px rgba(124,92,255,.35);
+  }
+
+  .form-title{ font-size:21px; margin:0 0 6px; letter-spacing:-.2px; }
+  .form-sub{ font-size:13px; color:var(--muted); margin:0 0 22px; }
+
+  /* ---------- Forms ---------- */
+  label{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:12px; letter-spacing:.3px; }
+  input, textarea{
+    width:100%;
+    margin-top:6px;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    padding:11px 13px;
+    border-radius:11px;
+    font-size:14px;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+    resize:vertical;
+  }
+  input:focus, textarea:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(124,92,255,.18);
+  }
+  input::placeholder{ color:#5c6b8c; }
+
+  button{ font-family:inherit; cursor:pointer; border:none; }
+
+  .btn-primary{
+    width:100%;
+    margin-top:6px;
+    padding:12px 18px;
+    border-radius:11px;
+    font-weight:700;
+    font-size:14px;
+    color:#fff;
+    background:linear-gradient(135deg,var(--accent),#5b8cff);
+    box-shadow:0 10px 26px rgba(124,92,255,.32);
+    transition:transform .12s, filter .12s;
+  }
+  .btn-primary:hover{ filter:brightness(1.08); }
+  .btn-primary:active{ transform:translateY(1px); }
+  .btn-primary:disabled{ opacity:.55; cursor:not-allowed; box-shadow:none; }
+
+  .btn-ghost{
+    padding:11px 18px;
+    border-radius:11px;
+    font-weight:600;
+    font-size:14px;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--text);
+    transition:background .15s, border-color .15s;
+  }
+  .btn-ghost:hover{ background:rgba(255,255,255,.05); border-color:#31436b; }
+
+  .btn-danger{
+    padding:11px 18px; border-radius:11px; font-weight:600; font-size:14px;
+    background:rgba(255,92,122,.12); border:1px solid rgba(255,92,122,.4); color:#ffb3c2;
+  }
+  .btn-danger:hover{ background:rgba(255,92,122,.2); }
+
+  .msg{ font-size:13px; margin:12px 0 0; min-height:16px; color:var(--muted); }
+  .msg.err{ color:var(--danger); }
+  .msg.ok{ color:var(--ok); }
+
+  /* ---------- Icon rendering ---------- */
+  .pix-icon{
+    width:var(--size);
+    height:var(--size);
+    display:grid;
+    place-items:center;
+    font-size:calc(var(--size) * .52);
+    line-height:1;
+    color:#fff;
+    user-select:none;
+    flex:none;
+    box-shadow:0 8px 24px rgba(0,0,0,.35);
+  }
+  .pix-icon.s-circle{ border-radius:50%; }
+  .pix-icon.s-squircle{ border-radius:28%; }
+  .pix-icon.s-hex{ clip-path:polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%); border-radius:0; }
+
+  /* ---------- Settings ---------- */
+  .settings-grid{ display:grid; grid-template-columns:300px 1fr; gap:18px; align-items:start; }
+  body.popup .settings-grid{ grid-template-columns:1fr; }
+
+  .preview-card{ text-align:center; }
+  .preview-card .pix-icon{ margin:6px auto 14px; }
+  .preview-card h3{ margin:0; font-size:18px; color:var(--text); text-transform:none; letter-spacing:0; }
+  .preview-card .uid{
+    font-family:ui-monospace, Menlo, Consolas, monospace;
+    font-size:10.5px; color:#5c6b8c; word-break:break-all;
+    margin:10px 0 16px;
+  }
+
+  .picker{ display:flex; flex-wrap:wrap; gap:8px; }
+  .emoji-btn{
+    width:42px;height:42px;border-radius:11px;
+    background:var(--panel-2); border:1px solid var(--line);
+    font-size:20px; line-height:1;
+    display:grid;place-items:center;
+    transition:.12s;
+  }
+  .emoji-btn:hover{ transform:translateY(-2px); border-color:#31436b; }
+  .emoji-btn.sel{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,92,255,.25); }
+
+  .swatch{
+    width:42px;height:42px;border-radius:11px;
+    border:2px solid transparent; transition:.12s;
+  }
+  .swatch:hover{ transform:translateY(-2px); }
+  .swatch.sel{ border-color:#fff; box-shadow:0 0 0 3px rgba(124,92,255,.35); }
+
+  .shape-btn{
+    width:42px;height:42px;border-radius:12px;
+    background:linear-gradient(135deg,#7c5cff,#22d3ee);
+    border:2px solid transparent; transition:.12s;
+  }
+  .shape-btn[data-shape="circle"]{ border-radius:50%; }
+  .shape-btn[data-shape="squircle"]{ border-radius:28%; }
+  .shape-btn[data-shape="hex"]{ clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%); border-radius:0; }
+  .shape-btn.sel{ outline:2px solid #fff; outline-offset:2px; }
+
+  .row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-top:20px; }
+  .row .btn-primary{ width:auto; flex:1; min-width:150px; }
+
+  /* ---------- Verify ---------- */
+  .verify-card{ text-align:center; max-width:520px; margin:0 auto; }
+  .verify-head{ display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:20px; }
+  .verify-head .arrow{ font-size:22px; color:var(--muted); }
+  .verify-card h2{ font-size:18px; margin:0 0 8px; }
+  .verify-card .who{ color:var(--muted); font-size:14px; margin:0 0 18px; }
+  .scopes{ list-style:none; padding:0; margin:0 0 22px; text-align:left; display:inline-block; }
+  .scopes li{ padding:7px 0; font-size:14px; color:#c6d3ee; }
+  .scopes li span{ color:var(--muted); font-size:12.5px; }
+
+  .center{ text-align:center; }
+  .big{ font-size:52px; margin-bottom:8px; }
+  .muted{ color:var(--muted); font-size:13.5px; }
+
+  .footer-note{ margin-top:26px; text-align:center; color:#4d5b78; font-size:11.5px; }
+  .footer-note a{ color:#6d7fa6; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 880px){
+    .auth-shell{ grid-template-columns:1fr; min-height:auto; }
+    .auth-side{ display:none; }
+    .auth-panel{ border-left:none; padding:26px 22px; }
+  }
+
+  body.popup .auth-shell{
+    grid-template-columns:1fr;
+    min-height:auto;
+    border-radius:16px;
+  }
+  body.popup .auth-side{ display:none; }
+  body.popup .auth-panel{ border-left:none; padding:20px 18px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="brand">
+    <div class="logo">P</div>
+    <div>
+      <h1>PIXLECT Account Network</h1>
+      <p class="sub" id="brandSub">One account for every PIXLECT app</p>
+    </div>
+  </header>
+
+  <!-- ============================= AUTH ============================= -->
+  <section id="view-auth" class="view">
+    <div class="auth-shell">
+
+      <!-- ---------- Tips / decorative side ---------- -->
+      <aside class="auth-side">
+        <div class="auth-side-inner">
+          <span class="pill">SECURE SIGN-IN</span>
+          <h2>One account.<br>Every PIXLECT app.</h2>
+          <p class="lead">
+            Sign in once and your username, icon and ID follow you into any
+            game on the network — no re-registering, no hassle.
+          </p>
+
+          <ul class="tips">
+            <li>
+              <span class="tip-ico">🎨</span>
+              <div>
+                <b>Design your icon</b>
+                <small>Pick an emoji, a gradient and a shape. Make it yours.</small>
+              </div>
+            </li>
+            <li>
+              <span class="tip-ico">🔐</span>
+              <div>
+                <b>Single sign-on</b>
+                <small>One username unlocks every PIXLECT title.</small>
+              </div>
+            </li>
+            <li>
+              <span class="tip-ico">🛡️</span>
+              <div>
+                <b>You approve every app</b>
+                <small>Nothing is shared until you explicitly allow it.</small>
+              </div>
+            </li>
+            <li>
+              <span class="tip-ico">⚡</span>
+              <div>
+                <b>Instant hand-off</b>
+                <small>Your profile reaches the game in milliseconds via JS.</small>
+              </div>
+            </li>
+          </ul>
+
+          <div class="auth-side-foot">
+            <div class="dots"><i></i><i></i><i></i></div>
+            <span>accounts.pixlect-studios.com</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ---------- Form panel ---------- -->
+      <div class="auth-panel">
+
+        <div class="seg" id="authSeg">
+          <button type="button" data-tab="signin" class="active">Sign In</button>
+          <button type="button" data-tab="signup">Create Account</button>
+        </div>
+
+        <!-- -------- Sign In (username only) -------- -->
+        <form id="form-signin" autocomplete="on">
+          <h2 class="form-title">Welcome back</h2>
+          <p class="form-sub">Sign in with your PIXLECT username.</p>
+
+          <label>Username
+            <input type="text" id="si-username" placeholder="PixelMaster99"
+                   autocomplete="username" maxlength="20" required />
+          </label>
+
+          <label>Password
+            <input type="password" id="si-password" placeholder="••••••••"
+                   autocomplete="current-password" required />
+          </label>
+
+          <button class="btn-primary" type="submit" id="si-submit">Sign In</button>
+          <p class="msg" id="si-msg"></p>
+        </form>
+
+        <!-- -------- Create Account -------- -->
+        <form id="form-signup" autocomplete="on" hidden>
+          <h2 class="form-title">Create your account</h2>
+          <p class="form-sub">Takes about twenty seconds.</p>
+
+          <label>E-Mail
+            <input type="email" id="su-email" placeholder="you@example.com"
+                   autocomplete="email" required />
+          </label>
+
+          <label>Username
+            <input type="text" id="su-username" placeholder="PixelMaster99"
+                   maxlength="20" autocomplete="nickname" required />
+          </label>
+
+          <label>Password
+            <input type="password" id="su-password" placeholder="At least 6 characters"
+                   autocomplete="new-password" required />
+          </label>
+
+          <label>Repeat Password
+            <input type="password" id="su-password2" placeholder="Repeat your password"
+                   autocomplete="new-password" required />
+          </label>
+
+          <button class="btn-primary" type="submit" id="su-submit">Create Account</button>
+          <p class="msg" id="su-msg"></p>
+        </form>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== SETTINGS =========================== -->
+  <section id="view-settings" class="view" hidden>
+    <div class="settings-grid">
+
+      <aside class="card preview-card">
+        <div id="previewIcon"></div>
+        <h3 id="previewUsername">username</h3>
+        <p class="muted" id="previewEmail" style="margin:6px 0 0;"></p>
+        <div class="uid" id="previewUid"></div>
+        <button class="btn-ghost" id="btnSignOut" style="width:100%">Sign Out</button>
+      </aside>
+
+      <div class="card">
+        <h2>Customise your account</h2>
+
+        <label>Username
+          <input type="text" id="set-username" maxlength="20" />
+        </label>
+
+        <label>Bio <span style="color:#4d5b78">(shown to apps you authorise)</span>
+          <textarea id="set-bio" rows="2" maxlength="120" placeholder="Just a pixel enthusiast."></textarea>
+        </label>
+
+        <h3>Icon Character</h3>
+        <div class="picker" id="emojiPicker"></div>
+
+        <h3>Icon Background</h3>
+        <div class="picker" id="bgPicker"></div>
+
+        <h3>Icon Shape</h3>
+        <div class="picker" id="shapePicker"></div>
+
+        <div class="row">
+          <button class="btn-primary" id="btnSave">Save Changes</button>
+          <button class="btn-danger" id="btnReset">Reset Icon</button>
+        </div>
+        <p class="msg" id="set-msg"></p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================ VERIFY ============================ -->
+  <section id="view-verify" class="view" hidden>
+    <div class="card verify-card">
+      <div class="verify-head">
+        <div id="verifyAppIcon"></div>
+        <div class="arrow">⟶</div>
+        <div id="verifyUserIcon"></div>
+      </div>
+
+      <h2><span id="verifyAppName">An app</span> wants to use your PIXLECT Account</h2>
+      <p class="who">Signed in as <b id="verifyUsername">—</b></p>
+
+      <ul class="scopes">
+        <li>✅ <b>Username</b> &nbsp;<span>— so the app can show who you are</span></li>
+        <li>✅ <b>Profile Icon</b> &nbsp;<span>— your emoji, colours &amp; shape</span></li>
+        <li>✅ <b>Account ID (UID)</b> &nbsp;<span>— to save your game data</span></li>
+      </ul>
+
+      <div class="row" style="justify-content:center">
+        <button class="btn-primary" id="btnAllow">Allow</button>
+        <button class="btn-ghost" id="btnDeny">Deny</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================= DONE ============================= -->
+  <section id="view-done" class="view" hidden>
+    <div class="card center" style="max-width:460px;margin:0 auto;">
+      <div class="big" id="doneIcon">✅</div>
+      <h2 id="doneTitle" style="margin-bottom:8px;">You're all set!</h2>
+      <p class="muted" id="doneText"></p>
+      <button class="btn-primary" id="btnDoneClose" style="margin-top:20px;">Close</button>
+    </div>
+  </section>
+
+  <p class="footer-note">
+    PIXLECT Account Network · <span id="footDomain">accounts.pixlect-studios.com</span>
+  </p>
+</div>
+
+<!-- ===================== Firebase SDK (compat) ===================== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+<script>
+/* =====================================================================
+   PIXLECT ACCOUNT NETWORK
+   ===================================================================== */
+
+/* ------------------------------ Firebase ------------------------------ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCIVE79AaP8Wv3xBwPVfR6nI8MrjQe6Yuk",
+  authDomain: "pixlect-accounts-7b147.firebaseapp.com",
+  databaseURL: "https://pixlect-accounts-7b147-default-rtdb.firebaseio.com",
+  projectId: "pixlect-accounts-7b147",
+  storageBucket: "pixlect-accounts-7b147.firebasestorage.app",
+  messagingSenderId: "418045691121",
+  appId: "1:418045691121:web:7cd839c3d20e757d061550",
+  measurementId: "G-GRS7E2QDP4"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const rtdb = firebase.database();
+
+/* ------------------------------ Constants ----------------------------- */
+const DEFAULT_ICON = {
+  emoji: '🦊',
+  bg: 'linear-gradient(135deg,#7c5cff,#22d3ee)',
+  shape: 'squircle'
+};
+
+const EMOJIS = [
+  '🦊','🐼','🐙','🦄','🐲','🐸','🐧','🦁','🐯','🐨','🐵','🐺',
+  '🦉','🐢','🦋','🐝','👾','🤖','👽','🎃','🌟','⚡','🔥','💎',
+  '🎮','🎧','🚀','🍕','🍩','🌈','😎','🤠'
+];
+
+const GRADIENTS = [
+  'linear-gradient(135deg,#7c5cff,#22d3ee)',
+  'linear-gradient(135deg,#ff5c7a,#ffb86c)',
+  'linear-gradient(135deg,#3ddc97,#22d3ee)',
+  'linear-gradient(135deg,#f472b6,#7c5cff)',
+  'linear-gradient(135deg,#facc15,#f97316)',
+  'linear-gradient(135deg,#0ea5e9,#1e3a8a)',
+  'linear-gradient(135deg,#22c55e,#065f46)',
+  'linear-gradient(135deg,#e11d48,#7f1d1d)',
+  'linear-gradient(135deg,#a855f7,#ec4899)',
+  'linear-gradient(135deg,#64748b,#0f172a)'
+];
+
+const SHAPES = ['squircle', 'circle', 'hex'];
+
+/* -------------------------------- State ------------------------------- */
+const params = new URLSearchParams(location.search);
+
+const IS_POPUP =
+  !!window.opener ||
+  window.name === 'pixlect-auth' ||
+  params.get('mode') === 'popup';
+
+let appName = params.get('app');
+if (!appName) {
+  const m = location.pathname.match(/verify-([^/?#]+)/i);
+  if (m) appName = decodeURIComponent(m[1]);
+}
+if (appName) appName = appName.trim();
+
+const redirectUri = params.get('redirect_uri');
+const stateParam  = params.get('state');
+
+const pendingApp = appName
+  ? { name: appName, redirectUri, state: stateParam }
+  : null;
+
+let currentUser = null;
+let profile     = null;
+let draftIcon   = { ...DEFAULT_ICON };
+let activeTab   = 'signin';
+let resolved    = false;
+
+/* ------------------------------- DOM ---------------------------------- */
+const $ = (id) => document.getElementById(id);
+
+const views = {
+  auth:     $('view-auth'),
+  settings: $('view-settings'),
+  verify:   $('view-verify'),
+  done:     $('view-done')
+};
+
+const formSignIn = $('form-signin');
+const formSignUp = $('form-signup');
+const authSeg    = $('authSeg');
+
+/* ------------------------------ Helpers ------------------------------- */
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function b64url(str) {
+  return btoa(unescape(encodeURIComponent(str)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function iconHTML(icon, size = 96) {
+  const i = { ...DEFAULT_ICON, ...(icon || {}) };
+  const shape = SHAPES.includes(i.shape) ? i.shape : 'squircle';
+  return `<div class="pix-icon s-${shape}" style="--size:${size}px;background:${i.bg}">${escapeHtml(i.emoji)}</div>`;
+}
+
+function appIconHTML(name, size = 64) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  const bg = GRADIENTS[h % GRADIENTS.length];
+  const emoji = EMOJIS[(h >> 3) % EMOJIS.length];
+  return `<div class="pix-icon s-squircle" style="--size:${size}px;background:${bg}">${emoji}</div>`;
+}
+
+function setMsg(el, text, kind = '') {
+  el.textContent = text;
+  el.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+function friendlyError(err) {
+  const map = {
+    'auth/invalid-email': 'That e-mail address doesn’t look right.',
+    'auth/user-not-found': 'No account found with that username.',
+    'auth/wrong-password': 'Incorrect password.',
+    'auth/invalid-credential': 'Incorrect username or password.',
+    'auth/email-already-in-use': 'An account with that e-mail already exists.',
+    'auth/weak-password': 'Password must be at least 6 characters.',
+    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+    'auth/network-request-failed': 'Network error. Check your connection.',
+    'auth/missing-password': 'Please enter your password.'
+  };
+  return map[err && err.code] || (err && err.message) || 'Something went wrong.';
+}
+
+function showView(name) {
+  Object.entries(views).forEach(([k, el]) => { el.hidden = (k !== name); });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ------------------------- View / layout setup ------------------------ */
+document.body.classList.toggle('popup', IS_POPUP);
+
+if (IS_POPUP) {
+  $('brandSub').textContent = pendingApp
+    ? `Continue to ${pendingApp.name}`
+    : 'Sign in to continue';
+}
+
+if (pendingApp) {
+  document.title = `Verify · ${pendingApp.name} · PIXLECT`;
+  $('brandSub').textContent = `Sign in to continue to ${pendingApp.name}`;
+}
+
+$('footDomain').textContent = location.hostname || 'accounts.pixlect-studios.com';
+
+/* Single form panel: only one form is visible at a time, toggled by the segment */
+function applyAuthLayout() {
+  formSignIn.hidden = activeTab !== 'signin';
+  formSignUp.hidden = activeTab !== 'signup';
+}
+
+authSeg.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-tab]');
+  if (!btn) return;
+  activeTab = btn.dataset.tab;
+  [...authSeg.children].forEach(b => b.classList.toggle('active', b === btn));
+  applyAuthLayout();
+});
+
+applyAuthLayout();
+
+/* =====================================================================
+   DOMAIN REDIRECT  (account. → accounts.)
+   ===================================================================== */
+(function canonicalRedirect() {
+  const SINGULAR = 'account.pixlect-studios.com';
+  const PLURAL   = 'accounts.pixlect-studios.com';
+
+  if (location.hostname === SINGULAR) {
+    const target = new URL(location.href);
+    target.hostname = PLURAL;
+    if (appName) target.pathname = '/verify-' + encodeURIComponent(appName);
+    location.replace(target.toString());
+  }
+})();
+
+/* =====================================================================
+   PROFILE
+   ===================================================================== */
+async function loadProfile(user) {
+  const ref = rtdb.ref('users/' + user.uid);
+  const snap = await ref.once('value');
+
+  if (snap.exists()) {
+    const data = snap.val();
+    return {
+      uid: user.uid,
+      email: data.email || user.email || '',
+      username: data.username || (user.email || 'user').split('@')[0],
+      bio: data.bio || '',
+      icon: { ...DEFAULT_ICON, ...(data.icon || {}) },
+      createdAt: data.createdAt || null
+    };
+  }
+
+  const username = (user.displayName || (user.email || 'user').split('@')[0])
+    .replace(/[^a-zA-Z0-9_.]/g, '')
+    .slice(0, 20) || 'user';
+
+  const fresh = {
+    uid: user.uid,
+    email: user.email || '',
+    username,
+    bio: '',
+    icon: { ...DEFAULT_ICON },
+    createdAt: Date.now()
+  };
+
+  await ref.set(fresh);
+  try {
+    await rtdb.ref('usernames/' + username.toLowerCase()).set({
+      uid: user.uid,
+      email: user.email || ''
+    });
+  } catch (e) {}
+
+  return fresh;
+}
+
+function paintProfile() {
+  if (!profile) return;
+
+  $('previewIcon').innerHTML       = iconHTML(profile.icon, 104);
+  $('previewUsername').textContent = profile.username;
+  $('previewEmail').textContent    = profile.email;
+  $('previewUid').textContent      = 'UID: ' + profile.uid;
+
+  $('set-username').value = profile.username;
+  $('set-bio').value      = profile.bio || '';
+
+  draftIcon = { ...DEFAULT_ICON, ...profile.icon };
+  renderPickers();
+}
+
+/* =====================================================================
+   PICKERS
+   ===================================================================== */
+function renderPickers() {
+  $('emojiPicker').innerHTML = EMOJIS.map(e =>
+    `<button type="button" class="emoji-btn${e === draftIcon.emoji ? ' sel' : ''}" data-emoji="${e}">${e}</button>`
+  ).join('');
+
+  $('bgPicker').innerHTML = GRADIENTS.map(g =>
+    `<button type="button" class="swatch${g === draftIcon.bg ? ' sel' : ''}" data-bg="${escapeHtml(g)}" style="background:${g}"></button>`
+  ).join('');
+
+  $('shapePicker').innerHTML = SHAPES.map(s =>
+    `<button type="button" class="shape-btn${s === draftIcon.shape ? ' sel' : ''}" data-shape="${s}" title="${s}"></button>`
+  ).join('');
+
+  $('previewIcon').innerHTML = iconHTML(draftIcon, 104);
+}
+
+$('emojiPicker').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-emoji]');
+  if (!b) return;
+  draftIcon.emoji = b.dataset.emoji;
+  renderPickers();
+});
+
+$('bgPicker').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-bg]');
+  if (!b) return;
+  draftIcon.bg = b.dataset.bg;
+  renderPickers();
+});
+
+$('shapePicker').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-shape]');
+  if (!b) return;
+  draftIcon.shape = b.dataset.shape;
+  renderPickers();
+});
+
+$('btnReset').addEventListener('click', () => {
+  draftIcon = { ...DEFAULT_ICON };
+  renderPickers();
+});
+
+/* =====================================================================
+   AUTH — username → email lookup (used for sign-in)
+   ===================================================================== */
+async function resolveUsernameToEmail(username) {
+  const key = String(username).trim().toLowerCase();
+  if (!key) {
+    const err = new Error('Please enter your username.');
+    err.code = 'auth/user-not-found';
+    throw err;
+  }
+
+  const snap = await rtdb.ref('usernames/' + key).once('value');
+  if (!snap.exists() || !snap.val() || !snap.val().email) {
+    const err = new Error('No account found with that username.');
+    err.code = 'auth/user-not-found';
+    throw err;
+  }
+  return snap.val().email;
+}
+
+/* =====================================================================
+   AUTH — SIGN IN (username only)
+   ===================================================================== */
+formSignIn.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = $('si-msg');
+  const btn = $('si-submit');
+
+  btn.disabled = true;
+  setMsg(msg, 'Signing in…');
+
+  try {
+    const email = await resolveUsernameToEmail($('si-username').value);
+    await auth.signInWithEmailAndPassword(email, $('si-password').value);
+    // onAuthStateChanged handles the rest
+  } catch (err) {
+    setMsg(msg, friendlyError(err), 'err');
+    btn.disabled = false;
+  }
+});
+
+/* =====================================================================
+   AUTH — CREATE ACCOUNT
+   ===================================================================== */
+formSignUp.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const msg = $('su-msg');
+  const btn = $('su-submit');
+
+  const email     = $('su-email').value.trim();
+  const password  = $('su-password').value;
+  const password2 = $('su-password2').value;
+  const username  = $('su-username').value.trim();
+
+  if (password !== password2) {
+    setMsg(msg, 'Passwords do not match.', 'err');
+    return;
+  }
+  if (!/^[a-zA-Z0-9_.]{3,20}$/.test(username)) {
+    setMsg(msg, 'Username must be 3–20 characters (letters, numbers, _ and .).', 'err');
+    return;
+  }
+
+  btn.disabled = true;
+  setMsg(msg, 'Creating your account…');
+
+  try {
+    const taken = await rtdb.ref('usernames/' + username.toLowerCase()).once('value');
+    if (taken.exists()) {
+      setMsg(msg, 'That username is already taken.', 'err');
+      btn.disabled = false;
+      return;
+    }
+
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    const uid = cred.user.uid;
+
+    await cred.user.updateProfile({ displayName: username });
+
+    const fresh = {
+      uid,
+      email,
+      username,
+      bio: '',
+      icon: { ...DEFAULT_ICON },
+      createdAt: Date.now()
+    };
+
+    await rtdb.ref('users/' + uid).set(fresh);
+    await rtdb.ref('usernames/' + username.toLowerCase()).set({ uid, email });
+
+    setMsg(msg, 'Account created!', 'ok');
+  } catch (err) {
+    setMsg(msg, friendlyError(err), 'err');
+    btn.disabled = false;
+  }
+});
+
+/* =====================================================================
+   SETTINGS — SAVE / SIGN OUT
+   ===================================================================== */
+$('btnSave').addEventListener('click', async () => {
+  const msg = $('set-msg');
+  if (!currentUser) return;
+
+  const newUsername = $('set-username').value.trim();
+  const newBio      = $('set-bio').value.trim();
+
+  if (!/^[a-zA-Z0-9_.]{3,20}$/.test(newUsername)) {
+    setMsg(msg, 'Username must be 3–20 characters (letters, numbers, _ and .).', 'err');
+    return;
+  }
+
+  setMsg(msg, 'Saving…');
+
+  try {
+    const oldUsername = profile.username;
+
+    if (newUsername.toLowerCase() !== oldUsername.toLowerCase()) {
+      const taken = await rtdb.ref('usernames/' + newUsername.toLowerCase()).once('value');
+      if (taken.exists()) {
+        setMsg(msg, 'That username is already taken.', 'err');
+        return;
+      }
+      await rtdb.ref('usernames/' + newUsername.toLowerCase()).set({
+        uid: currentUser.uid,
+        email: profile.email
+      });
+      await rtdb.ref('usernames/' + oldUsername.toLowerCase()).remove().catch(() => {});
+    }
+
+    const update = { username: newUsername, bio: newBio, icon: draftIcon };
+    await rtdb.ref('users/' + currentUser.uid).update(update);
+
+    profile = { ...profile, ...update };
+    paintProfile();
+
+    setMsg(msg, 'Saved ✓', 'ok');
+    setTimeout(() => setMsg(msg, ''), 2500);
+  } catch (err) {
+    setMsg(msg, friendlyError(err), 'err');
+  }
+});
+
+$('btnSignOut').addEventListener('click', async () => {
+  resolved = false;
+  await auth.signOut();
+});
+
+/* =====================================================================
+   VERIFY FLOW
+   ===================================================================== */
+function showVerify() {
+  $('verifyAppName').textContent  = pendingApp.name;
+  $('verifyUsername').textContent = profile.username;
+  $('verifyAppIcon').innerHTML    = appIconHTML(pendingApp.name, 64);
+  $('verifyUserIcon').innerHTML   = iconHTML(profile.icon, 64);
+  showView('verify');
+}
+
+function showDone(icon, title, text, closable) {
+  $('doneIcon').textContent  = icon;
+  $('doneTitle').textContent = title;
+  $('doneText').textContent  = text;
+  $('btnDoneClose').hidden   = !closable;
+  showView('done');
+}
+
+function sendToApp(payload) {
+  try { if (window.opener) window.opener.postMessage(payload, '*'); } catch (e) {}
+  try {
+    if (window.parent && window.parent !== window) window.parent.postMessage(payload, '*');
+  } catch (e) {}
+
+  try {
+    const bc = new BroadcastChannel('pixlect-account');
+    bc.postMessage(payload);
+    setTimeout(() => bc.close(), 400);
+  } catch (e) {}
+
+  try {
+    localStorage.setItem('pixlect:auth-event', JSON.stringify({ ...payload, _ts: Date.now() }));
+  } catch (e) {}
+}
+
+function finishDenied() {
+  resolved = true;
+
+  const payload = {
+    type: 'PIXLECT_AUTH',
+    app: pendingApp ? pendingApp.name : null,
+    status: 'denied',
+    state: pendingApp ? pendingApp.state : null
+  };
+
+  sendToApp(payload);
+
+  if (pendingApp && pendingApp.redirectUri) {
+    try {
+      const u = new URL(pendingApp.redirectUri);
+      u.searchParams.set('pixlect_status', 'denied');
+      if (pendingApp.state) u.searchParams.set('state', pendingApp.state);
+      location.replace(u.toString());
+      return;
+    } catch (e) {}
+  }
+
+  if (IS_POPUP) {
+    showDone('🚫', 'Access denied', 'You can close this window.', true);
+    setTimeout(() => window.close(), 1200);
+  } else {
+    showDone('🚫', 'Access denied',
+      `${pendingApp ? pendingApp.name : 'The app'} was not given access to your account.`, true);
+  }
+}
+
+function finishAllowed() {
+  resolved = true;
+
+  const user = {
+    uid: currentUser.uid,
+    username: profile.username,
+    email: profile.email,
+    bio: profile.bio || '',
+    icon: { ...DEFAULT_ICON, ...profile.icon },
+    createdAt: profile.createdAt || null
+  };
+
+  const payload = {
+    type: 'PIXLECT_AUTH',
+    app: pendingApp ? pendingApp.name : null,
+    status: 'success',
+    state: pendingApp ? pendingApp.state : null,
+    user
+  };
+
+  sendToApp(payload);
+
+  if (pendingApp && pendingApp.redirectUri) {
+    try {
+      const u = new URL(pendingApp.redirectUri);
+      u.searchParams.set('pixlect_status', 'success');
+      u.searchParams.set('pixlect_uid', user.uid);
+      u.searchParams.set('pixlect_username', user.username);
+      u.searchParams.set('pixlect_icon', b64url(JSON.stringify(user.icon)));
+      if (pendingApp.state) u.searchParams.set('state', pendingApp.state);
+      location.replace(u.toString());
+      return;
+    } catch (e) {}
+  }
+
+  if (IS_POPUP) {
+    showDone('✅', 'Signed in!',
+      `Returning to ${pendingApp ? pendingApp.name : 'the app'}…`, true);
+    setTimeout(() => window.close(), 900);
+  } else {
+    showDone('✅', 'Account shared',
+      `Username and icon were sent to ${pendingApp ? pendingApp.name : 'the app'}. You can close this window.`,
+      true);
+  }
+}
+
+$('btnAllow').addEventListener('click', finishAllowed);
+$('btnDeny').addEventListener('click', finishDenied);
+
+$('btnDoneClose').addEventListener('click', () => {
+  if (IS_POPUP) window.close();
+  else if (pendingApp) { /* nothing to close */ }
+  else showView('settings');
+});
+
+/* =====================================================================
+   ROUTER
+   ===================================================================== */
+auth.onAuthStateChanged(async (user) => {
+  currentUser = user;
+
+  if (!user) {
+    profile = null;
+    $('si-submit').disabled = false;
+    $('su-submit').disabled = false;
+    setMsg($('si-msg'), '');
+    setMsg($('su-msg'), '');
+    // reset the form panel back to Sign In
+    activeTab = 'signin';
+    [...authSeg.children].forEach(b =>
+      b.classList.toggle('active', b.dataset.tab === 'signin'));
+    applyAuthLayout();
+    showView('auth');
+    return;
+  }
+
+  try {
+    profile = await loadProfile(user);
+  } catch (err) {
+    console.error('Profile load failed:', err);
+    profile = {
+      uid: user.uid,
+      email: user.email || '',
+      username: user.displayName || 'user',
+      bio: '',
+      icon: { ...DEFAULT_ICON },
+      createdAt: null
+    };
+  }
+
+  paintProfile();
+
+  if (pendingApp && !resolved) {
+    showVerify();
+  } else if (pendingApp && resolved) {
+    /* stay on done */
+  } else {
+    showView('settings');
+  }
+});
+
+/* =====================================================================
+   OPTIONAL — same-origin listener for games on this page
+   ===================================================================== */
+window.PIXLECT_ACCOUNT = {
+  onAuth(cb) {
+    window.addEventListener('message', (ev) => {
+      const d = ev.data;
+      if (d && d.type === 'PIXLECT_AUTH') cb(d);
+    });
+    window.addEventListener('storage', (ev) => {
+      if (ev.key !== 'pixlect:auth-event' || !ev.newValue) return;
+      try { cb(JSON.parse(ev.newValue)); } catch (e) {}
+    });
+    try {
+      const bc = new BroadcastChannel('pixlect-account');
+      bc.onmessage = (ev) => {
+        if (ev.data && ev.data.type === 'PIXLECT_AUTH') cb(ev.data);
+      };
+    } catch (e) {}
+  }
+};
+</script>
+</body>
+</html>
