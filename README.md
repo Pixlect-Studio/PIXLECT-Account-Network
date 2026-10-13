@@ -1,1 +1,1 @@
-http://www.account.pixlect-studios.com/
+https://www.account.pixlect-studios.com/
